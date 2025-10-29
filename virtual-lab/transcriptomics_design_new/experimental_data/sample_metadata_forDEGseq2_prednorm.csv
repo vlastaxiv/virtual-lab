@@ -1,0 +1,17 @@
+sample,condition,line,group
+2_CK_7U,CK,2,sensitive
+2_CM_7U,CM,2,sensitive
+24_CK_4,CK,24,intermediate
+24_CM_4,CM,24,intermediate
+40_CK_2,CK,40,sensitive
+40_CM_2,CM,40,sensitive
+41_CK_3,CK,41,sensitive
+41_CM_3,CM,41,sensitive
+8_CK_7,CK,8,sensitive
+8_CM_7,CM,8,sensitive
+BER_CK_1,CK,BER,resistant
+BER_CK5,CK,BER,resistant
+BER_CK6,CK,BER,resistant
+BER_CM_1,CM,BER,resistant
+BER_CM5,CM,BER,resistant
+BER_CM6,CM,BER,resistant
