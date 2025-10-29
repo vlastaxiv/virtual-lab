@@ -1,11 +1,34 @@
-## User
+"""Constants for the transcriptomics design project."""
 
-This is the beginning of an individual meeting with Principal Investigator to discuss your research project.
+from pathlib import Path
+from virtual_lab.agent import Agent
+from virtual_lab.prompts import SCIENTIFIC_CRITIC
 
-Here is the agenda for the meeting:
+# Meetings constants
+num_iterations = 5
+num_rounds = 3
 
+# Models
+model = "gpt-4o-2024-08-06"
+model_mini = "gpt-4o-mini-2024-07-18"
 
+# Discussion paths
+discussions_dir = Path("discussions")
+workflow_phases = [
+    "team_selection",
+    "project_specification",
+    "tools_selection",
+    "workflow_design",
+    "implementation_agent_selection"
+    "workflow_design",
+]
 
+human_eval_phases = ["human_eval"]
+phases = workflow_phases + human_eval_phases
+discussions_phase_to_dir = {phase: discussions_dir / phase for phase in phases}
+
+# Prompts
+background_prompt = """
 You are working on a transcriptomic research project to identify genes associated with metronidazole resistance in the human parasite Giardia intestinalis.
 
 You have a unique resistant line named BER, derived from a human patient, which has maintained stable resistance for years in culture. You also have five sensitive lines: isolates 2, 8, 40, 41, and 24.
@@ -13,9 +36,9 @@ You have a unique resistant line named BER, derived from a human patient, which 
 For each isolate (both resistant BER and sensitive lines), you have RNA-seq data from control samples (without metronidazole) and from treated samples (with the same metronidazole concentration), all cultured under identical microaerobic conditions.
 
 The goal is to identify the true molecular mechanisms of metronidazole resistance and distinguish them from general drug responses and baseline strain differences.
+"""
 
-
-
+experimental_results_prompt = """
 We received RNA-seq data analysis from an external sequencing company (SEQme). While the preprocessing and basic analysis were performed correctly, the differential expression analysis has significant limitations that prevent proper identification of resistance mechanisms.
 
 Sequencing and Preprocessing (COMPLETED):
@@ -104,152 +127,61 @@ Their problematic analysis results (for reference only - DO NOT USE):
   * The raw count matrix should be re-analyzed properly with multi-factorial design
 
 Note: Raw sequencing data (FASTQ, BAM files) are available on external storage if needed for quality validation.
+"""
 
 
-Based on the project specification, selected tools, and implementation assignments, design a detailed step-by-step workflow for the transcriptomics analysis.
+# Set up agents
 
-The workflow should cover:
-1. Data preparation and quality control
-2. Statistical analysis (DESeq2 multi-factorial model)
-3. Functional annotation (pathway enrichment)
-4. Putative protein characterization
-5. Visualization and reporting
+# Team lead
+principal_investigator = Agent(
+    title="Principal Investigator",
+    expertise="applying artificial intelligence to biomedical research, transcriptomics, RNA-seq analysis, microbial drug resistance, Giardia intestinalis biology, experimental design for multi-factorial studies",
+    goal="identify the molecular mechanisms of metronidazole resistance in Giardia intestinalis by properly analyzing transcriptomic data and distinguishing true resistance from confounding factors and perform research in your area of expertise that maximizes the scientific impact of the work",
+    role="lead a team of experts to re-analyze the RNA-seq data using artificial intelligence for biomedicine, make key decisions about the project direction based on team member input, and manage the project timeline and resources",
+    model=model,
+)
 
-Provide a clear, modular, and reproducible workflow with inputs, outputs, and quality checks for each step.
+# Scientific critic
+scientific_critic = SCIENTIFIC_CRITIC
 
+# Specialized science agents
+statistician = Agent(
+        title="Bioinformatics Statistician",
+        expertise="multi-factorial statistical modeling, RNA-seq analysis, DESeq2, edgeR",
+        goal="develop and implement a robust multi-factorial model to distinguish resistance-specific expression changes from baseline strain differences and general drug responses",
+        role="perform differential expression analysis using advanced statistical methodologies, ensuring robust control for confounding variables and appropriate statistical thresholds",
+        model=model,
+    )
 
-Here are the agenda questions that must be answered:
+parasitologist = Agent(
+        title="Molecular Parasitologist",
+        expertise="Giardia intestinalis biology, protozoan drug resistance mechanisms, transcriptomics",
+        goal="interpret gene expression changes in the context of Giardia biology and elucidate potential resistance mechanisms",
+        role="provide biological insights and context for the transcriptomic data, ensuring relevance to Giardia physiology and pathology",
+        model=model,
+    )
 
-1. What is the complete step-by-step workflow for the analysis?
+computational_biologist = Agent(
+        title="Computational Biologist",
+        expertise="R/Bioconductor, Python, functional annotation, protein function prediction",
+        goal="execute computational analyses and annotate Giardia genes, including putative and hypothetical proteins",
+        role="perform functional annotation and prediction using sequence homology, domain analysis, and comparative genomics tools",
+        model=model,
+    )
 
-2. What are the inputs and outputs for each major step?
+software_developer = Agent(
+        title="Bioinformatics Software Developer",
+        expertise="R/Bioconductor, Python, data processing automation, visualization",
+        goal="develop and maintain scripts and pipelines for RNA-seq data processing and visualization, ensuring reproducibility",
+        role="implement the statistical models and data visualization tools, automating workflows for efficient data analysis",
+        model=model,
+    )
 
-3. What quality control checks should be performed at each stage?
-
-4. How will the different analysis components integrate together?
-
-5. What are the key decision points and how should they be handled?
-
-Principal Investigator, please provide your response to the agenda.
-
-## Principal Investigator
-
-To ensure a robust analysis of the RNA-seq data to identify genes associated with metronidazole resistance in Giardia intestinalis, we need a detailed and structured workflow. This will allow us to address the limitations of the previous analysis and meet our project goals. Below is a comprehensive workflow:
-
-### Step-by-Step Workflow for Transcriptomic Analysis
-
-#### 1. Data Preparation and Quality Control
-
-**Inputs:**
-- `A2_count_matrix.txt`
-- `sample_metadata_forDEseq2_prednorm.csv`
-- `genome_annotation/`
-
-**Outputs:**
-- Cleaned and normalized count matrix
-- QC reports
-
-**Steps:**
-1. **Load and Process Count Data:**
-   - Import the raw count matrix and sample metadata.
-   - Verify data integrity by cross-referencing sample labels and conditions with metadata.
-
-2. **Initial Quality Control:**
-   - Use tools like FastQC and MultiQC to generate quality reports for raw and mapped reads (check `242114199_multiqc_report.html`).
-
-3. **Normalization:**
-   - Normalize counts using the DESeq2 or edgeR package in R to account for library size differences.
-
-4. **Quality Check:**
-   - Conduct principal component analysis (PCA) to visualize sample clustering by condition and genotype.
-   - Generate density plots and boxplots to assess distribution and detect outliers.
-
-#### 2. Statistical Analysis (DESeq2 Multi-factorial Model)
-
-**Inputs:**
-- Normalized count matrix
-- Sample metadata
-
-**Outputs:**
-- List of differentially expressed genes (DEGs)
-- Interaction effect results
-
-**Steps:**
-1. **Multi-factorial DESeq2 Analysis:**
-   - Set up a multi-factorial model in DESeq2 to evaluate the effects of genotype (resistant vs. sensitive), treatment (control vs. metronidazole), and their interaction.
-   - Model: `~ genotype + treatment + genotype:treatment`
-   - Focus on interaction terms to identify genes uniquely associated with resistance in the BER line.
-
-2. **Statistical Thresholds:**
-   - Apply FDR-adjusted p-values (< 0.05) to control for multiple testing.
-   - Use a more stringent log2FC cutoff based on biological relevance after consulting domain-specific literature.
-
-3. **Quality Check:**
-   - Generate volcano and MA plots to visually inspect significant DEGs.
-   - Examine dispersion estimates and model fit diagnostics.
-
-#### 3. Functional Annotation (Pathway Enrichment)
-
-**Inputs:**
-- List of DEGs
-
-**Outputs:**
-- Enriched pathways and GO terms
-
-**Steps:**
-1. **Functional Enrichment Analysis:**
-   - Use databases like KEGG, GO, and Reactome to perform pathway enrichment analysis for significant DEGs.
-   - Identify pathways disproportionately represented in the resistant vs. sensitive lines.
-
-2. **Quality Check:**
-   - Validate enrichment results by cross-checking with literature for known resistance pathways.
-
-#### 4. Putative Protein Characterization
-
-**Inputs:**
-- Genes or proteins of interest (from enriched pathways)
-
-**Outputs:**
-- Annotations and functional predictions
-
-**Steps:**
-1. **Characterization:**
-   - Use BLAST, InterProScan, or similar tools to predict protein domains and motifs.
-   - Annotate known and predicted functions of candidate resistance genes.
-
-2. **Quality Check:**
-   - Cross-reference predicted protein functions with known databases (e.g., UniProt).
-
-#### 5. Visualization and Reporting
-
-**Inputs:**
-- Analysis results (DEGs, enriched pathways)
-
-**Outputs:**
-- Comprehensive report and visualizations
-
-**Steps:**
-1. **Visualization:**
-   - Create heatmaps for expression patterns of key genes.
-   - Generate bar plots for enriched pathways.
-
-2. **Reporting:**
-   - Compile a detailed report including methods, results, and biological interpretations.
-   - Include a table of top candidate resistance genes with prioritization for validation studies.
-
-3. **Quality Check:**
-   - Ensure clarity and accuracy in all visualizations.
-   - Cross-review the report for consistency and completeness.
-
-### Integration and Key Decision Points
-
-- **Integration:**
-  - Each step builds upon the previous, feeding outputs as inputs for subsequent analysis.
-  - Ensure interoperability by maintaining consistent data formats and identifiers.
-
-- **Key Decision Points:**
-  - Decide on appropriate log2FC thresholds post-initial analysis based on biological significance.
-  - Prioritize candidate genes for validation based on pathway involvement, expression consistency, and literature support.
-
-This structured workflow ensures a comprehensive and reproducible analysis to elucidate the molecular mechanisms of metronidazole resistance in Giardia intestinalis.
-
+# Team members
+team_members = (
+        scientific_critic,
+        statistician,
+        parasitologist,
+        computational_biologist,
+        software_developer,
+    )

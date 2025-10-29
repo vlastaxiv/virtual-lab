@@ -1,7 +1,6 @@
 """Constants for the transcriptomics design project."""
 
 from pathlib import Path
-
 from virtual_lab.agent import Agent
 from virtual_lab.prompts import SCIENTIFIC_CRITIC
 
@@ -21,17 +20,11 @@ workflow_phases = [
     "tools_selection",
     "workflow_design",
     "implementation_agent_selection"
-]
-
-implementation_phases = [
-    "deseq2_analysis",
-    "functional_annotation", 
-    "putative_protein_analysis",
-    "visualization"
+    "workflow_design",
 ]
 
 human_eval_phases = ["human_eval"]
-phases = workflow_phases + implementation_phases + human_eval_phases
+phases = workflow_phases + human_eval_phases
 discussions_phase_to_dir = {phase: discussions_dir / phase for phase in phases}
 
 # Prompts
@@ -152,43 +145,6 @@ principal_investigator = Agent(
 scientific_critic = SCIENTIFIC_CRITIC
 
 # Specialized science agents
-statistician = Agent(
-        title="Bioinformatics Statistician",
-        expertise="multi-factorial statistical modeling, RNA-seq analysis, DESeq2, edgeR",
-        goal="develop and implement a robust multi-factorial model to distinguish resistance-specific expression changes from baseline strain differences and general drug responses",
-        role="perform differential expression analysis using advanced statistical methodologies, ensuring robust control for confounding variables and appropriate statistical thresholds",
-        model=model,
-    )
-
-parasitologist = Agent(
-        title="Molecular Parasitologist",
-        expertise="Giardia intestinalis biology, protozoan drug resistance mechanisms, transcriptomics",
-        goal="interpret gene expression changes in the context of Giardia biology and elucidate potential resistance mechanisms",
-        role="provide biological insights and context for the transcriptomic data, ensuring relevance to Giardia physiology and pathology",
-        model=model,
-    )
-
-computational_biologist = Agent(
-        title="Computational Biologist",
-        expertise="R/Bioconductor, Python, functional annotation, protein function prediction",
-        goal="execute computational analyses and annotate Giardia genes, including putative and hypothetical proteins",
-        role="perform functional annotation and prediction using sequence homology, domain analysis, and comparative genomics tools",
-        model=model,
-    )
-
-software_developer = Agent(
-        title="Bioinformatics Software Developer",
-        expertise="R/Bioconductor, Python, data processing automation, visualization",
-        goal="develop and maintain scripts and pipelines for RNA-seq data processing and visualization, ensuring reproducibility",
-        role="implement the statistical models and data visualization tools, automating workflows for efficient data analysis",
-        model=model,
-    )
 
 # Team members
-team_members = (
-        scientific_critic,
-        statistician,
-        parasitologist,
-        computational_biologist,
-        software_developer
-    )
+team_members = ()

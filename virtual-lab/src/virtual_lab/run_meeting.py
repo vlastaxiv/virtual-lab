@@ -4,11 +4,6 @@ import time
 from pathlib import Path
 from typing import Literal
 
-import os
-
-from dotenv import load_dotenv
-load_dotenv()
-
 from openai import OpenAI
 from tqdm import trange, tqdm
 
@@ -97,7 +92,7 @@ def run_meeting(
     start_time = time.time()
 
     # Set up client
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+    client = OpenAI()
 
     # Set up team
     if meeting_type == "team":
