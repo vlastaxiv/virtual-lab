@@ -18,8 +18,7 @@ workflow_phases = [
     "team_selection",
     "project_specification",
     "tools_selection",
-    "workflow_design",
-    "implementation_agent_selection"
+    "implementation_agent_selection",
     "workflow_design",
 ]
 
@@ -37,6 +36,7 @@ For each isolate (both resistant BER and sensitive lines), you have RNA-seq data
 
 The goal is to identify the true molecular mechanisms of metronidazole resistance and distinguish them from general drug responses and baseline strain differences.
 """
+transcriptomics_prompt = "Your team previously finished wet lab work. It has RNAseq results from Illumina isntrument with basic pre-processing."
 
 experimental_results_prompt = """
 We received RNA-seq data analysis from an external sequencing company (SEQme). While the preprocessing and basic analysis were performed correctly, the differential expression analysis has significant limitations that prevent proper identification of resistance mechanisms.
@@ -179,7 +179,6 @@ software_developer = Agent(
 
 # Team members
 team_members = (
-        scientific_critic,
         statistician,
         parasitologist,
         computational_biologist,

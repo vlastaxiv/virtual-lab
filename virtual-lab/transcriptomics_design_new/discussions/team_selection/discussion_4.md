@@ -1,30 +1,11 @@
-"""Constants for the transcriptomics design project."""
+## User
 
-from pathlib import Path
-from virtual_lab.agent import Agent
-from virtual_lab.prompts import SCIENTIFIC_CRITIC
+This is the beginning of an individual meeting with Principal Investigator to discuss your research project.
 
-# Meetings constants
-num_iterations = 5
-num_rounds = 3
+Here is the agenda for the meeting:
 
-# Models
-model = "gpt-4o-2024-08-06"
-model_mini = "gpt-4o-mini-2024-07-18"
 
-# Discussion paths
-discussions_dir = Path("discussions")
-phases = [
-    "team_selection",
-    "project_specification",
-    "tools_selection",
-    "implementation_agent_selection",
-    "workflow_design",
-]
 
-discussions_phase_to_dir = {phase: discussions_dir / phase for phase in phases}
-
-background_prompt = """
 You are part of a research initiative focused on uncovering the molecular basis of metronidazole resistance in the human parasite Giardia intestinalis.
 
 The project investigates one unique, clinically resistant line (BER) and several sensitive lines (2, 8, 24, 40, and 41), all originally isolated from patients. 
@@ -37,9 +18,9 @@ The goal is to identify transcriptomic changes and pathways specific to natural 
 Your task is to design and implement a complete, reproducible, and automatable analysis pipeline — from statistical modeling to functional interpretation — producing well-documented R or Python code for differential expression, visualization, and annotation. 
 You may also apply modern computational tools (e.g., AlphaFold, InterPro, Pfam) to assist in functional prediction of unannotated genes. 
 If additional information is required, you are encouraged to ask the project lead. Collaboration and clear reasoning are preferred.
-"""
 
-experimental_results_prompt = """
+
+
 We received RNA-seq analysis results from Illumina instrument from an external provider (SEQme). Preprocessing was correct, but the differential expression analysis was inadequate and failed to identify true resistance mechanisms. A new, statistically sound and biologically interpretable analysis is required.
 
 Experiment summary:
@@ -81,60 +62,91 @@ Re-analyze RNA-seq data using an integrative, multi-layer pipeline combining sta
 
 Deliverables:
 Provide reproducible R/Python code, publication-quality visualizations (volcano plots, PCA, heatmaps, network maps), and propose new hypotheses explaining metronidazole resistance in Giardia intestinalis.
-"""
 
 
-# Set up agents
+You need to select a team of four scientists to help you with this transcriptomics project. The team should deal with these analytical challenges:
 
-# Team lead
-principal_investigator = Agent(
+- Multi-factorial statistical modeling to separate resistance from confounding factors
+- RNA-seq analysis and differential expression (DESeq2, edgeR)
+- Biological interpretation in the context of Giardia intestinalis biology and protozoan drug resistance
+- Implementation and development of automated, reproducible pipelines (R/Bioconductor, Python)
+- Functional annotation and characterization of putative/hypothetical proteins
+
+NOTE: Giardia intestinalis is a unique protozoan parasite with unusual biology. Understanding gene expression changes requires expertise in parasite physiology and drug resistance mechanisms.
+
+IMPORTANT: Many Giardia genes are annotated as "putative protein" or "hypothetical protein". The team needs expertise in:
+- Protein function prediction (sequence homology, domain analysis, structural prediction)
+- Comparative genomics to infer function from related organisms
+- Literature mining and database searches to assign putative functions
+
+The team should also include a software-oriented member capable of automating the analysis, maintaining reproducible workflows, and integrating code across R and Python environments.
+The selected scientists should complement each others expertise and collaborate as an integrated research team.
+
+Please select the team members in the following format. You should NOT include yourself (Principal Investigator) in the list. Write the team as a Python list of Agent objects with "model=model" as the last parameter.
+
+Agent(
     title="Principal Investigator",
-    expertise="applying artificial intelligence to molecular and transcriptomic biology, with a focus on gene expression analysis, mechanisms of drug resistance, and the integration of computational reasoning with experimental evidence in Giardia intestinalis",
-    goal="identify molecular mechanisms underlying natural metronidazole resistance in the unique clinical isolate BER by combining data-driven modeling, machine learning, and biological insight to produce rigorous and biologically meaningful results",
-    role="lead an interdisciplinary team connecting bioinformatics, parasitology, statistics, and software development. Foster collaboration, clarity, and the joy of scientific discovery, ensuring that all results are reproducible, interpretable, and relevant to understanding true clinical resistance",
+    expertise="transcriptomics, RNA-seq analysis, microbial drug resistance, experimental design",
+    goal="identify molecular mechanisms of metronidazole resistance in Giardia intestinalis",
+    role="lead a team of experts to properly re-analyze the RNA-seq data and identify validated candidate resistance genes",
     model=model,
 )
 
-# Scientific critic
-scientific_critic = SCIENTIFIC_CRITIC
+Principal Investigator, please provide your response.
 
-# Specialized science agents
-statistician = Agent(
+
+Principal Investigator, please provide your response to the agenda.
+
+## Principal Investigator
+
+Below is the selection of team members designed to address the specific analytical challenges of this transcriptomics project. This team combines expertise in statistical modeling, RNA-seq analysis, biological interpretation, and software development, ensuring a comprehensive approach to uncovering the molecular basis of metronidazole resistance in *Giardia intestinalis*.
+
+```python
+team = [
+    Agent(
         title="Statistical Bioinformatician",
-        expertise="RNA-seq analysis, multi-factorial statistical modeling, differential expression analysis, DESeq2, edgeR",
+        expertise="multi-factorial statistical modeling, differential expression analysis, DESeq2, edgeR",
         goal="develop a robust statistical framework to differentiate true resistance mechanisms from confounding factors",
         role="design and implement multi-factorial models, ensuring statistical rigor and appropriate control for variability",
-        model=model
-    )
-
-parasitologist = Agent(
+        model=model,
+    ),
+    Agent(
         title="Parasitologist and Protozoan Biologist",
         expertise="Giardia intestinalis biology, protozoan drug resistance mechanisms, gene expression interpretation",
         goal="provide biological insights on gene expression changes and potential resistance mechanisms in Giardia",
         role="interpret the biological relevance of findings, and identify candidate genes associated with resistance",
-        model=model
-    )
-
-computational_biologist = Agent(
+        model=model,
+    ),
+    Agent(
         title="Computational Biologist",
         expertise="functional annotation, protein function prediction, comparative genomics, AI-assisted gene function prediction",
         goal="annotate and characterize putative/hypothetical proteins linked to metronidazole resistance",
         role="apply bioinformatics tools and databases to predict protein functions and infer biological pathways",
-        model=model
-    )
-
-software_developer = Agent(
-        title="Software Developer",
+        model=model,
+    ),
+    Agent(
+        title="Bioinformatics Software Engineer",
         expertise="pipeline development, automation, R/Bioconductor, Python, reproducible research",
         goal="develop a reproducible and automatable analysis pipeline integrating R and Python environments",
         role="implement and maintain code for differential expression analysis, visualization, and functional annotation",
-        model=model
+        model=model,
     )
+]
+```
 
-# Team members
-team_members = (
-        statistician,
-        parasitologist,
-        computational_biologist,
-        software_developer,
-   )
+## Response to the Agenda
+
+1. **Differential Expression Analysis**:
+   - I will oversee the design of a robust multi-factorial statistical model to accurately separate resistance mechanisms from confounding factors. This includes working closely with the Statistical Bioinformatician to identify constitutive and induced resistance effects, ensuring the application of appropriate FDR-adjusted thresholds and meaningful log2FC cutoffs.
+
+2. **Functional Analysis**:
+   - The Parasitologist and Protozoan Biologist, in collaboration with the Computational Biologist, will focus on identifying enriched pathways and annotating genes. We'll leverage databases like GO, KEGG, and Reactome to elucidate biological processes involved in resistance and highlight candidates for experimental validation.
+
+3. **Integrative and Exploratory Analysis**:
+   - We'll apply co-expression and network clustering to explore gene interactions and modules. The Computational Biologist will use AI-assisted tools like AlphaFold for structural predictions to aid functional insights, while the Bioinformatics Software Engineer will ensure pipeline automation and integration.
+
+4. **Deliverables**:
+   - The team will develop reproducible R/Python scripts for data analysis, facilitating seamless workflow execution. We will produce publication-quality visualizations and propose biological hypotheses that explain the mechanisms of metronidazole resistance, contributing to a deeper understanding of this clinically relevant issue.
+
+I am looking forward to working with this team to explore and uncover the true molecular underpinnings of metronidazole resistance in *Giardia intestinalis*. Through collaborative efforts, we aim to generate insights with significant implications for protozoan drug resistance research.
+
